@@ -44,7 +44,6 @@ class LoginScreen extends StatelessWidget {
 }
 
 class _LoginForm extends StatelessWidget {
-  const _LoginForm({super.key});
   @override
   Widget build(BuildContext context) {
     final loginForm = Provider.of<LoginFormProvider>(context);

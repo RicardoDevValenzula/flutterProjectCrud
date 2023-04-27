@@ -1,36 +1,45 @@
 // To parse this JSON data, do
 //
-//     final game = gameFromJson(jsonString);
+//     final game = gameFromMap(jsonString);
+
 import 'dart:convert';
 
 class Game {
-  bool available;
-  String name;
-  String? picture;
-  int rating;
+    bool available;
+    String name;
+    String? picture;
+    double? rating;
+    String? id;
+    int? hours;
 
-  Game({
-    required this.available,
-    required this.name,
-    this.picture,
-    required this.rating,
-  });
+    Game({
+        required this.available,
+        required this.name,
+        this.picture,
+        this.rating,
+        this.hours,
+        this.id
+    });
 
-  factory Game.fromRawJson(String str) => Game.fromJson(json.decode(str));
+    factory Game.fromJson(String str) => Game.fromMap(json.decode(str));
 
-  String toRawJson() => json.encode(toJson());
+    String toJson() => json.encode(toMap());
 
-  factory Game.fromJson(Map<String, dynamic> json) => Game(
+    factory Game.fromMap(Map<String, dynamic> json) => Game(
         available: json["available"],
         name: json["name"],
         picture: json["picture"],
-        rating: json["rating"],
-      );
+        hours: json["hours"],
+        rating: json["rating"]?.toDouble()
+    );
 
-  Map<String, dynamic> toJson() => {
+    Map<String, dynamic> toMap() => {
         "available": available,
         "name": name,
         "picture": picture,
-        "rating": rating,
-      };
+        "rating": rating?.toDouble(),
+        "hours" : hours
+    };
+
+    Game copy() => Game(available: available, name: name, rating: rating,picture: picture, hours: hours, id: id);
 }

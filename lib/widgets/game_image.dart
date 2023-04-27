@@ -3,7 +3,9 @@
 import 'package:flutter/material.dart';
 
 class GameImage extends StatelessWidget {
-  const GameImage({super.key});
+  final String? url;
+
+  const GameImage({super.key, this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +18,13 @@ class GameImage extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(45), topRight: Radius.circular(45)),
-          child: FadeInImage(
+          child: url == null ?
+          Image(image: AssetImage('assets/images/no-image.png'),
+              fit: BoxFit.cover,
+            ):
+          FadeInImage(
             placeholder: AssetImage('assets/images/jar-loading.gif'),
-            image: NetworkImage('https://via.placeholder.com/400x300/blue'),
+            image: NetworkImage(url!),
             fit: BoxFit.cover,
           ),
         ),

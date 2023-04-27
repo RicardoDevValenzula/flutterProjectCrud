@@ -1,9 +1,16 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:crud_app/models/game.dart';
+import 'package:crud_app/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class GameCard extends StatelessWidget {
+
+final Game game;
+
+  const GameCard({super.key, required this.game});
+  
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -16,9 +23,9 @@ class GameCard extends StatelessWidget {
           child: Stack(
             alignment: Alignment.bottomLeft,
             children: [
-              _BackGroundImage(),
-              _GameDetails(),
-              Positioned(top: 15, right: 15, child: _RatingTag())
+              _BackGroundImage( url: game.picture ),
+              _GameDetails(name: game.name, hours: game.hours),
+              Positioned(top: 15, right: 15, child: _RatingTag(rating: game.rating,))
             ],
           ),
         ));
@@ -34,11 +41,15 @@ class GameCard extends StatelessWidget {
 }
 
 class _RatingTag extends StatelessWidget {
+  final double? rating;
+
+  const _RatingTag({this.rating});
+
   @override
   Widget build(BuildContext context) {
-    double rating = 3.5;
+    print(rating);
     return RatingBar.builder(
-      initialRating: rating,
+      initialRating: rating!,
       minRating: 1,
       direction: Axis.horizontal,
       allowHalfRating: true,
@@ -62,6 +73,11 @@ class _RatingTag extends StatelessWidget {
 }
 
 class _GameDetails extends StatelessWidget {
+  final String name;
+  final int? hours;
+
+  const _GameDetails({super.key, required this.name, this.hours});
+
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(right: 40),
@@ -74,9 +90,9 @@ class _GameDetails extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'The Witcher',
+              name,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 25,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
@@ -84,11 +100,11 @@ class _GameDetails extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Calification',
+              'Hours played: ${ hours!.toString() }',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 15,
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -106,6 +122,11 @@ class _GameDetails extends StatelessWidget {
 }
 
 class _BackGroundImage extends StatelessWidget {
+
+  final String? url;
+
+  const _BackGroundImage({super.key, this.url});
+
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
@@ -113,9 +134,14 @@ class _BackGroundImage extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 400,
-        child: FadeInImage(
+        child: url == null 
+        ? Image(image: AssetImage('assets/no-image.png'),
+        fit: BoxFit.cover,
+        )
+        :
+        FadeInImage(
           placeholder: AssetImage('assets/images/jar-loading.gif'),
-          image: NetworkImage('https://via.placeholder.com/400x300/f6f6f6'),
+          image: NetworkImage(url!),
           fit: BoxFit.cover,
         ),
       ),
