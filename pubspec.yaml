@@ -32,9 +32,13 @@ dependencies:
   cupertino_icons: ^1.0.2
   provider: ^6.0.5
   flutter_rating_bar: ^4.0.1
+  image_picker: ^0.8.7+4
+  googleapis: ^5.0.0
+  flutter_secure_storage: ^8.0.0
   flutter:
     sdk: flutter
   http: ^0.13.5
+  googleapis_auth: ^1.4.0
   
 
 dev_dependencies:

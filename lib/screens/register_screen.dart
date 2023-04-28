@@ -1,15 +1,14 @@
 // El comentario de abajo es para ignorar una sugerencia del inter de Dart
 // ignore_for_file: prefer_const_constructors
+import 'package:crud_app/services/services.dart';
 import 'package:crud_app/ui/inputDecorations.dart';
 import 'package:crud_app/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/login_provider.dart';
-import '../services/services.dart';
 
-class LoginScreen extends StatelessWidget {
+class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +22,7 @@ class LoginScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: 5),
                   Text(
-                    'LOGIN',
+                    'Sign In',
                     style: Theme.of(context).textTheme.headline4,
                   ),
                   SizedBox(height: 10),
@@ -34,14 +33,13 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 50),
             TextButton(
-              onPressed: () =>
-                  Navigator.pushReplacementNamed(context, 'register'),
-              child: Text('Register',
+              onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
+              child: Text('Have an account ?',
                   style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.white)),
-            ),
+            )
           ],
         ),
       )),
@@ -106,19 +104,18 @@ class _LoginForm extends StatelessWidget {
                       Provider.of<AuthService>(context, listen: false);
 
                   if (!loginForm.isValidForm()) return;
-                  final String? errorMessage = await authService.login(
+                  final String? errorMessage = await authService.createUser(
                       loginForm.email, loginForm.password);
                   if (errorMessage == null) {
                     Navigator.pushReplacementNamed(context, 'home');
                   } else {
-                    // print(errorMessage);
-                    NotificationsService.showSnackbar(errorMessage);
+                    print(errorMessage);
                   }
                 },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
             child: Text(
-              loginForm.isLoading ? 'Wait' : 'Log In',
+              loginForm.isLoading ? 'Wait' : 'Sign In',
               style: TextStyle(color: Colors.white),
             ),
           ),

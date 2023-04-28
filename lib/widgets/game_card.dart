@@ -4,15 +4,17 @@ import 'package:crud_app/models/game.dart';
 import 'package:crud_app/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:crud_app/services/game_service.dart';
+import 'package:provider/provider.dart';
 
 class GameCard extends StatelessWidget {
-
-final Game game;
+  final Game game;
 
   const GameCard({super.key, required this.game});
-  
+
   @override
   Widget build(BuildContext context) {
+    final gameService = Provider.of<GameService>(context);
     return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: Container(
@@ -23,9 +25,15 @@ final Game game;
           child: Stack(
             alignment: Alignment.bottomLeft,
             children: [
-              _BackGroundImage( url: game.picture ),
+              _BackGroundImage(url: game.picture),
               _GameDetails(name: game.name, hours: game.hours),
-              Positioned(top: 15, right: 15, child: _RatingTag(rating: game.rating,))
+              Positioned(
+                  top: 15,
+                  right: 15,
+                  child: _RatingTag(
+                    gameObj: game,
+                    gameService: gameService,
+                  ))
             ],
           ),
         ));
@@ -41,15 +49,15 @@ final Game game;
 }
 
 class _RatingTag extends StatelessWidget {
-  final double? rating;
-
-  const _RatingTag({this.rating});
+  final Game gameObj;
+  final GameService gameService;
+  const _RatingTag({required this.gameObj, required this.gameService});
 
   @override
   Widget build(BuildContext context) {
-    print(rating);
+    double rating = gameObj.rating ?? 0;
     return RatingBar.builder(
-      initialRating: rating!,
+      initialRating: rating,
       minRating: 1,
       direction: Axis.horizontal,
       allowHalfRating: true,
@@ -60,8 +68,9 @@ class _RatingTag extends StatelessWidget {
         Icons.star,
         color: Colors.amber,
       ),
-      onRatingUpdate: (value) {
-        null;
+      onRatingUpdate: (value) async {
+        gameObj.rating = value;
+        await gameService.saveOrCreateGame(gameObj);
       },
     );
   }
@@ -100,7 +109,7 @@ class _GameDetails extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             Text(
-              'Hours played: ${ hours!.toString() }',
+              'Hours played: ${hours!.toString()}',
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.white,
@@ -122,7 +131,6 @@ class _GameDetails extends StatelessWidget {
 }
 
 class _BackGroundImage extends StatelessWidget {
-
   final String? url;
 
   const _BackGroundImage({super.key, this.url});
@@ -134,16 +142,16 @@ class _BackGroundImage extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 400,
-        child: url == null 
-        ? Image(image: AssetImage('assets/no-image.png'),
-        fit: BoxFit.cover,
-        )
-        :
-        FadeInImage(
-          placeholder: AssetImage('assets/images/jar-loading.gif'),
-          image: NetworkImage(url!),
-          fit: BoxFit.cover,
-        ),
+        child: url == null
+            ? Image(
+                image: AssetImage('assets/images/no-image.png'),
+                fit: BoxFit.cover,
+              )
+            : FadeInImage(
+                placeholder: AssetImage('assets/images/jar-loading.gif'),
+                image: NetworkImage(url!),
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }

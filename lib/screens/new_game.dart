@@ -8,14 +8,13 @@ import 'package:crud_app/widgets/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class Game extends StatelessWidget {
+class NewGame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-  final gameService = Provider.of<GameService>(context);
-    return 
-    ChangeNotifierProvider(
-    create: (_)=> GameFormProvider(gameService.gameSelected),
-    child: _NewGameBody(gameService: gameService),
+    final gameService = Provider.of<GameService>(context);
+    return ChangeNotifierProvider(
+      create: (_) => GameFormProvider(gameService.gameSelected),
+      child: _NewGameBody(gameService: gameService),
     );
   }
 }
@@ -30,14 +29,16 @@ class _NewGameBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   final gameFormProvider =  Provider.of<GameFormProvider>(context);
+    final gameFormProvider = Provider.of<GameFormProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             Stack(
               children: [
-                GameImage(url: gameService.gameSelected.picture,),
+                GameImage(
+                  url: gameService.gameSelected.picture,
+                ),
                 Positioned(
                     top: 60,
                     left: 20,
@@ -70,8 +71,10 @@ class _NewGameBody extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.save_outlined),
-        onPressed: () {
-          gameFormProvider.isValidForm();
+        onPressed: () async {
+          if (gameFormProvider.isValidForm()) return;
+          FocusScope.of(context).unfocus();
+          await gameService.saveOrCreateGame(gameFormProvider.game);
         },
       ),
     );
@@ -81,8 +84,8 @@ class _NewGameBody extends StatelessWidget {
 class _GameForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-  final gameForm = Provider.of<GameFormProvider>(context);
-  final game = gameForm.game;
+    final gameForm = Provider.of<GameFormProvider>(context);
+    final game = gameForm.game;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -96,8 +99,8 @@ class _GameForm extends StatelessWidget {
               TextFormField(
                 initialValue: game.name,
                 onChanged: (value) => game.name = value,
-                validator: (value){
-                  if(value == null || value.length <1){
+                validator: (value) {
+                  if (value == null || value.length < 1) {
                     return 'Name: REQUIRED';
                   }
                 },
@@ -110,9 +113,11 @@ class _GameForm extends StatelessWidget {
                   FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?'))
                 ],
                 initialValue: '${game.hours}',
-                onChanged: (value) => game.hours = int.tryParse(value) ==null ? game.hours = 0 : game.hours = int.parse(value),
-                validator: (value){
-                  if(value == null || value.length <1){
+                onChanged: (value) => game.hours = int.tryParse(value) == null
+                    ? game.hours = 0
+                    : game.hours = int.parse(value),
+                validator: (value) {
+                  if (value == null || value.length < 1) {
                     return 'Name: REQUIRED';
                   }
                 },

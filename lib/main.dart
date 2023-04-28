@@ -11,7 +11,10 @@ class AppState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => GameService())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthService()),
+        ChangeNotifierProvider(create: (_) => GameService())
+      ],
       child: MyApp(),
     );
   }
@@ -25,12 +28,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'CRUD',
-      initialRoute: 'login',
+      initialRoute: 'checking',
       routes: {
+        'register': (_) => RegisterScreen(),
         'login': (_) => LoginScreen(),
         'home': (_) => HomeScreen(),
-        'newgame': (_) => Game()
+        'newgame': (_) => NewGame(),
+        'checking': (_) => CheckAuthScreen(),
       },
+      scaffoldMessengerKey: NotificationsService.messengerKey,
       theme: ThemeData.light().copyWith(
           scaffoldBackgroundColor: Colors.grey[300],
           appBarTheme: AppBarTheme(elevation: 0, color: Colors.indigo),
